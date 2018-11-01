@@ -46,6 +46,8 @@ public class SMSReceiver extends BroadcastReceiver {
                 }else{
                     SecondPlayer.setReceived(message);
                 }
+            }else if(message.contains("in_progress")){
+                TTT.receiveTurn(message);
             }
         }
     }

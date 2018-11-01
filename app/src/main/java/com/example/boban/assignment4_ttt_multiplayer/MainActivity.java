@@ -25,6 +25,8 @@ public class MainActivity extends AppCompatActivity {
     static Context context;
     static boolean received = false;
     static boolean alertDialogShow = false;
+    static String[] vars;
+    static String pNumber;
 
 
     @Override
@@ -33,7 +35,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Intent intent = getIntent();
         final String phoneNumber = intent.getStringExtra("phone_number");
-        SecondPlayer.context = getApplicationContext();
+        pNumber = phoneNumber;
+        MainActivity.context = getApplicationContext();
 
         buttonBall = findViewById(R.id.imageBall);
         buttonMusic = findViewById(R.id.imageMusic);
@@ -75,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                smsManager.sendTextMessage(phoneNumber, null, "new_start,p1,"+textName.getText().toString()+","+imageName+","+"main", null, null);
+                smsManager.sendTextMessage(phoneNumber, null, "new_start,1,"+textName.getText().toString()+","+imageName+","+"main", null, null);
                 checkOtherPlayer();
             }
         });
@@ -84,8 +87,12 @@ public class MainActivity extends AppCompatActivity {
     private void checkOtherPlayer(){
         if(received){
             Intent intentTTT = new Intent(this, TTT.class);
+            intentTTT.putExtra(SecondPlayer.P2_NAME, vars[2]);
+            intentTTT.putExtra(SecondPlayer.P2_IMAGE, vars[3]);
             intentTTT.putExtra(P1_NAME, textName.getText().toString());
             intentTTT.putExtra(P1_IMAGE, imageName);
+            intentTTT.putExtra("PLAYER_NUM", 0);
+            intentTTT.putExtra("PHONE_NUMBER", pNumber);
             startActivity(intentTTT);
         }else{
             alertDialogShow = true;
@@ -98,15 +105,18 @@ public class MainActivity extends AppCompatActivity {
 
     public static void setReceived(String message){
         if(alertDialogShow){
-            String[] vars = message.split(",");
+            vars = message.split(",");
             Intent intentTTT = new Intent(context, TTT.class);
             intentTTT.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intentTTT.putExtra(SecondPlayer.P2_NAME, vars[2]);
             intentTTT.putExtra(SecondPlayer.P2_IMAGE, vars[3]);
             intentTTT.putExtra(P1_NAME, textName.getText().toString());
             intentTTT.putExtra(P1_IMAGE, imageName);
+            intentTTT.putExtra("PLAYER_NUM", 0);
+            intentTTT.putExtra("PHONE_NUMBER", pNumber);
             context.startActivity(intentTTT);
         }else{
+            vars = message.split(",");
             received = true;
         }
     }

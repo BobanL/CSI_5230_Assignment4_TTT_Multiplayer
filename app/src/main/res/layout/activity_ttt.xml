@@ -22,10 +22,10 @@
         android:layout_width="96dp"
         android:layout_height="96dp"
         android:layout_marginTop="24dp"
+        android:textColor="@android:color/transparent"
         app:layout_constraintEnd_toStartOf="@+id/button11"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        android:textColor="@android:color/transparent"
         app:layout_constraintTop_toBottomOf="@+id/textViewStatus" />
 
     <com.example.boban.assignment4_ttt_multiplayer.TTTButton
@@ -33,20 +33,21 @@
         android:layout_width="96dp"
         android:layout_height="96dp"
         android:layout_marginTop="24dp"
+        android:textColor="@android:color/transparent"
         app:layout_constraintEnd_toStartOf="@+id/button02"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/button00"
-        android:textColor="@android:color/transparent"
         app:layout_constraintTop_toBottomOf="@+id/textViewStatus" />
+
     <com.example.boban.assignment4_ttt_multiplayer.TTTButton
         android:id="@+id/button02"
         android:layout_width="96dp"
         android:layout_height="96dp"
         android:layout_marginTop="24dp"
+        android:textColor="@android:color/transparent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/button01"
-        android:textColor="@android:color/transparent"
         app:layout_constraintTop_toBottomOf="@+id/textViewStatus" />
 
 
@@ -55,10 +56,10 @@
         android:layout_width="96dp"
         android:layout_height="96dp"
         android:layout_marginTop="8dp"
+        android:textColor="@android:color/transparent"
         app:layout_constraintEnd_toStartOf="@+id/button11"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        android:textColor="@android:color/transparent"
         app:layout_constraintTop_toBottomOf="@+id/button00" />
 
     <com.example.boban.assignment4_ttt_multiplayer.TTTButton
@@ -66,10 +67,10 @@
         android:layout_width="96dp"
         android:layout_height="96dp"
         android:layout_marginTop="8dp"
+        android:textColor="@android:color/transparent"
         app:layout_constraintEnd_toStartOf="@+id/button12"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/button10"
-        android:textColor="@android:color/transparent"
         app:layout_constraintTop_toBottomOf="@+id/button01" />
 
     <com.example.boban.assignment4_ttt_multiplayer.TTTButton
@@ -77,10 +78,10 @@
         android:layout_width="96dp"
         android:layout_height="96dp"
         android:layout_marginTop="8dp"
+        android:textColor="@android:color/transparent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/button11"
-        android:textColor="@android:color/transparent"
         app:layout_constraintTop_toBottomOf="@+id/button02" />
 
     <com.example.boban.assignment4_ttt_multiplayer.TTTButton
@@ -88,10 +89,10 @@
         android:layout_width="96dp"
         android:layout_height="96dp"
         android:layout_marginTop="8dp"
+        android:textColor="@android:color/transparent"
         app:layout_constraintEnd_toStartOf="@+id/button21"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        android:textColor="@android:color/transparent"
         app:layout_constraintTop_toBottomOf="@+id/button10" />
 
     <com.example.boban.assignment4_ttt_multiplayer.TTTButton
@@ -99,10 +100,10 @@
         android:layout_width="96dp"
         android:layout_height="96dp"
         android:layout_marginTop="8dp"
+        android:textColor="@android:color/transparent"
         app:layout_constraintEnd_toStartOf="@+id/button22"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/button20"
-        android:textColor="@android:color/transparent"
         app:layout_constraintTop_toBottomOf="@+id/button11" />
 
     <com.example.boban.assignment4_ttt_multiplayer.TTTButton
@@ -110,23 +111,11 @@
         android:layout_width="96dp"
         android:layout_height="96dp"
         android:layout_marginTop="8dp"
+        android:textColor="@android:color/transparent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/button21"
-        android:textColor="@android:color/transparent"
         app:layout_constraintTop_toBottomOf="@+id/button12" />
-
-    <Button
-        android:id="@+id/buttonStart"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="24dp"
-        android:text="Start"
-        app:layout_constraintEnd_toStartOf="@+id/buttonCancel"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button20" />
 
     <Button
         android:id="@+id/buttonRestart"
@@ -144,11 +133,12 @@
         android:id="@+id/buttonCancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="24dp"
         android:text="Cancel"
         app:layout_constraintEnd_toStartOf="@+id/buttonRestart"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/buttonStart"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button21" />
 
 

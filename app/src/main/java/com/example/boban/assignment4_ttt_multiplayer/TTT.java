@@ -3,30 +3,41 @@ package com.example.boban.assignment4_ttt_multiplayer;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.telephony.SmsManager;
 import android.view.Gravity;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
 public class TTT extends AppCompatActivity {
     TextView turnLabel = null;
-    Button buttonStart, buttonRestart, buttonCancel = null;
-    TTTButton tttButton[] = new TTTButton[9];
+    Button buttonRestart, buttonCancel = null;
+    static TTTButton tttButton[] = new TTTButton[9];
     Player player[] = new Player[2];
-    int current = 0;
+    static int current = 0, playerNum;
+    SmsManager smsManager = SmsManager.getDefault();
+    String phoneNumber;
+    static TTT activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ttt);
-
+        activity = this;
         Intent intent = getIntent();
-
         player[0] = new Player(intent.getStringExtra(MainActivity.P1_IMAGE), intent.getStringExtra(MainActivity.P1_NAME));
         player[1] = new Player(intent.getStringExtra(SecondPlayer.P2_IMAGE), intent.getStringExtra(SecondPlayer.P2_NAME));
 
+        playerNum = intent.getIntExtra("PLAYER_NUM", -1);
+        phoneNumber = intent.getStringExtra("PHONE_NUMBER");
+
+        if(current%2 == playerNum){
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        }else{
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        }
         turnLabel = findViewById(R.id.textViewStatus);
-        buttonStart = findViewById(R.id.buttonStart);
         buttonRestart = findViewById(R.id.buttonRestart);
         buttonCancel = findViewById(R.id.buttonCancel);
 
@@ -40,20 +51,12 @@ public class TTT extends AppCompatActivity {
         tttButton[7] = findViewById(R.id.button21);
         tttButton[8] = findViewById(R.id.button22);
 
-        buttonStart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                buttonStart.setVisibility(View.GONE);
-                String updateText = "It is " + player[current % 2].name + "'s turn";
-                turnLabel.setText(updateText);
-            }
-        });
+        String updateText = "It is " + player[current % 2].name + "'s turn";
+        turnLabel.setText(updateText);
 
         buttonRestart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Arrays.fill(player[0].dataCell, null);
-                //Arrays.fill(player[1].dataCell, null);
                 player[0].unRegister();
                 player[1].unRegister();
                 for (int i = 0; i < tttButton.length; i++) {
@@ -86,8 +89,11 @@ public class TTT extends AppCompatActivity {
             tttButton[i].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    System.out.println(tttButton[j].getId());
-                    if(!buttonStart.isShown() && tttButton[j].getText().toString().equals("")) {
+                    if(current%2 == playerNum){
+                        smsManager.sendTextMessage(phoneNumber, null, "in_progress," + playerNum + "," + player[current%2].name + "," +player[current%2].symbol +","+j , null, null);
+                        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                    }
+                    if(tttButton[j].getText().toString().equals("")) {
                         player[current%2].register(tttButton[j], j);
                         player[current%2].MarkCell(j);
                         current++;
@@ -130,4 +136,10 @@ public class TTT extends AppCompatActivity {
         return check;
     }
 
+    public static void receiveTurn(String message){
+        String[] vars = message.split(",");
+        activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        current = Integer.parseInt(vars[1]);
+        tttButton[Integer.parseInt(vars[4])].performClick();
+    }
 }
