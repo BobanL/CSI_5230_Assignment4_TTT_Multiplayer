@@ -18,15 +18,15 @@ public class MainActivity extends AppCompatActivity {
     public static final String P1_NAME =
             "PLAYER1_NAME";
     ImageButton buttonBall, buttonMusic, buttonMoon = null;
-    static EditText textName = null;
+    EditText textName = null;
     Button next = null;
-    static String imageName = "ghost";
+    String imageName = null;
     SmsManager smsManager = SmsManager.getDefault();
-    static Context context;
-    static boolean received = false;
-    static boolean alertDialogShow = false;
-    static String[] vars;
-    static String pNumber;
+    Context context = null;
+    boolean received = false;
+    boolean alertDialogShow = false;
+    String[] vars = null;
+    String pNumber = null;
 
 
     @Override
@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = getIntent();
         final String phoneNumber = intent.getStringExtra("phone_number");
         pNumber = phoneNumber;
-        MainActivity.context = getApplicationContext();
+        SMSReceiver smsReceiver = new SMSReceiver(this);
 
         buttonBall = findViewById(R.id.imageBall);
         buttonMusic = findViewById(R.id.imageMusic);
@@ -94,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
             intentTTT.putExtra("PLAYER_NUM", 0);
             intentTTT.putExtra("PHONE_NUMBER", pNumber);
             startActivity(intentTTT);
+            finish();
         }else{
             alertDialogShow = true;
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -103,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public static void setReceived(String message){
+    public void setReceived(String message){
         if(alertDialogShow){
             vars = message.split(",");
             Intent intentTTT = new Intent(context, TTT.class);
@@ -114,7 +115,8 @@ public class MainActivity extends AppCompatActivity {
             intentTTT.putExtra(P1_IMAGE, imageName);
             intentTTT.putExtra("PLAYER_NUM", 0);
             intentTTT.putExtra("PHONE_NUMBER", pNumber);
-            context.startActivity(intentTTT);
+            startActivity(intentTTT);
+            finish();
         }else{
             vars = message.split(",");
             received = true;

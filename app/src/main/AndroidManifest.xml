@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.boban.assignment4_ttt_multiplayer">
 
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.SEND_SMS" />
@@ -17,13 +17,16 @@
         <activity android:name=".MainActivity" />
         <activity android:name=".SecondPlayer" />
         <activity android:name=".TTT" />
-        <activity android:name=".Start">
+        <activity android:name=".Invite">
+        </activity>
+        <activity android:name=".Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".PlayerSettings"></activity>
     </application>
 
 </manifest>

@@ -1,7 +1,6 @@
 package com.example.boban.assignment4_ttt_multiplayer;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -11,13 +10,12 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.SmsManager;
-import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class Start extends AppCompatActivity {
+public class Invite extends AppCompatActivity {
     TextView statusText = null;
     EditText phoneNumberText = null;
     Button inviteButton = null;
@@ -50,14 +48,15 @@ public class Start extends AppCompatActivity {
 
 
     public void displayAlert(final String number){
-        AlertDialog.Builder builder = new AlertDialog.Builder(Start.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(Invite.this);
         builder.setMessage("You've been invited by " + number).setTitle("Invited!");
         builder.setPositiveButton("Accept Invite", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 smsManager.sendTextMessage(number, null, "accept", null, null);
-                Intent intent = new Intent(Start.this, SecondPlayer.class);
+                Intent intent = new Intent(Invite.this, SecondPlayer.class);
                 intent.putExtra("phone_number", number);
                 startActivity(intent);
+                finish();
             }
         });
         builder.setNegativeButton("Deny Invite", new DialogInterface.OnClickListener() {

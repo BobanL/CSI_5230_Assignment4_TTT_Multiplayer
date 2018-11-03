@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.SmsManager;
-import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -12,18 +11,20 @@ import android.widget.TextView;
 
 public class TTT extends AppCompatActivity {
     TextView turnLabel = null;
-    Button buttonRestart, buttonCancel = null;
-    static TTTButton tttButton[] = new TTTButton[9];
+    Button buttonRestart, buttonCancel;
+    TTTButton tttButton[] = new TTTButton[9];
     Player player[] = new Player[2];
-    static int current = 0, playerNum;
+    int current = 0, playerNum = 0;
     SmsManager smsManager = SmsManager.getDefault();
     String phoneNumber;
-    static TTT activity;
+    TTT activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ttt);
+        SMSReceiver smsReceiver = new SMSReceiver(this);
+
         activity = this;
         Intent intent = getIntent();
         player[0] = new Player(intent.getStringExtra(MainActivity.P1_IMAGE), intent.getStringExtra(MainActivity.P1_NAME));
@@ -57,15 +58,21 @@ public class TTT extends AppCompatActivity {
         buttonRestart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                smsManager.sendTextMessage(phoneNumber, null, "restart," + playerNum + "," + player[current%2].name + "," +player[current%2].symbol , null, null);
                 player[0].unRegister();
                 player[1].unRegister();
                 for (int i = 0; i < tttButton.length; i++) {
                     tttButton[i].setEnabled(true);
                 }
-
                 current = 0;
                 String updateText = "It is " + player[current % 2].name + "'s turn";
                 turnLabel.setText(updateText);
+                if(current%2 == playerNum){
+                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                }else{
+                    getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                }
+
             }
         });
 
@@ -75,9 +82,12 @@ public class TTT extends AppCompatActivity {
                 for (int i = 0; i < tttButton.length; i++) {
                     tttButton[i].setEnabled(false);
                 }
-                String updateText = "Cancelled.\n Press restart to play again.";
-                turnLabel.setText(updateText);
-                turnLabel.setGravity(Gravity.CENTER);
+                smsManager.sendTextMessage(phoneNumber, null, "cancel," + playerNum + "," + player[current%2].name + "," +player[current%2].symbol , null, null);
+
+                Intent sIntent = new Intent(activity.getApplicationContext(), Invite.class);
+                sIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                activity.getApplicationContext().startActivity(sIntent);
+                finish();
             }
         });
 
@@ -95,7 +105,7 @@ public class TTT extends AppCompatActivity {
                     }
                     if(tttButton[j].getText().toString().equals("")) {
                         player[current%2].register(tttButton[j], j);
-                        player[current%2].MarkCell(j);
+                           player[current%2].MarkCell(j);
                         current++;
                         String updateText = "It is " + player[current % 2].name + "'s turn";
                         turnLabel.setText(updateText);
@@ -120,8 +130,10 @@ public class TTT extends AppCompatActivity {
             for(int i = 0; i < tttButton.length; i++) {
                 tttButton[i].setEnabled(false);
             }
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         }else if(fullBoard()){
             turnLabel.setText("Cat's Game :|");
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         }
 
     }
@@ -136,10 +148,28 @@ public class TTT extends AppCompatActivity {
         return check;
     }
 
-    public static void receiveTurn(String message){
+    public void receiveTurn(String message){
         String[] vars = message.split(",");
         activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         current = Integer.parseInt(vars[1]);
         tttButton[Integer.parseInt(vars[4])].performClick();
+    }
+
+    public void cancelGame(){
+        Intent sIntent = new Intent(activity.getApplicationContext(), Invite.class);
+        sIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        this.startActivity(sIntent);
+        finish();
+    }
+
+    public void restartGame(){
+        player[0].unRegister();
+        player[1].unRegister();
+        for (int i = 0; i < tttButton.length; i++) {
+            tttButton[i].setEnabled(true);
+        }
+        current = 0;
+        String updateText = "It is " + player[current % 2].name + "'s turn";
+        turnLabel.setText(updateText);
     }
 }

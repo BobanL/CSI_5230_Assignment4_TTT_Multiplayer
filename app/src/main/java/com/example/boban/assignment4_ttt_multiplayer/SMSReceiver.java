@@ -9,12 +9,39 @@ import android.os.Bundle;
 import android.telephony.SmsMessage;
 
 public class SMSReceiver extends BroadcastReceiver {
-    Start activity;
+    Invite activity;
+    SecondPlayer secondPlayer;
+    MainActivity mainActivity;
+    TTT ttt;
 
     final String filter = "android.provider.Telephony.SMS_RECEIVED";
     IntentFilter intentFilter = new IntentFilter(filter);
     public SMSReceiver(Context context) {
-        activity = (Start) context;
+        try{
+           activity = (Invite) context;
+        }catch(Exception e){
+            System.out.println(e);
+
+        }
+        try{
+            secondPlayer = (SecondPlayer) context;
+        }catch (Exception e){
+            System.out.println(e);
+
+        }
+        try{
+            mainActivity = (MainActivity) context;
+        }catch (Exception e){
+            System.out.println(e);
+        }
+        try{
+            ttt = (TTT) context;
+        }catch (Exception e){
+            System.out.println(e);
+
+        }
+
+
         context.registerReceiver(this, intentFilter);
     }
 
@@ -42,12 +69,16 @@ public class SMSReceiver extends BroadcastReceiver {
             }else if(message.contains("new_start")){
                 String[] breakDown = message.split(",");
                 if(breakDown[4].equals("second")){
-                    MainActivity.setReceived(message);
+                    mainActivity.setReceived(message);
                 }else{
-                    SecondPlayer.setReceived(message);
+                    secondPlayer.setReceived(message);
                 }
             }else if(message.contains("in_progress")){
-                TTT.receiveTurn(message);
+                ttt.receiveTurn(message);
+            }else if(message.contains("cancel")){
+                ttt.cancelGame();
+            }else if(message.contains("restart")){
+                ttt.restartGame();
             }
         }
     }
