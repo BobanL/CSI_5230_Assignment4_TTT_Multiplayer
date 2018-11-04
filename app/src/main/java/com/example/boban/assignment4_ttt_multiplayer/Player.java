@@ -1,7 +1,9 @@
 package com.example.boban.assignment4_ttt_multiplayer;
 
 public class Player {
-	String symbol;
+
+
+    String symbol;
 	String name;
 	DataCell[] dataCell = new DataCell[9];
 	
@@ -27,9 +29,14 @@ public class Player {
 		return symbol;
 	}
 
+    public String getName() {
+        return name;
+    }
+
 	public void unRegister() {
 		for (int i = 0; i < dataCell.length; i++) {
 			dataCell[i].clear();
 		}
 	}
+
 }

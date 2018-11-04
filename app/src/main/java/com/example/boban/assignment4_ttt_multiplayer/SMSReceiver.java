@@ -49,6 +49,10 @@ public class SMSReceiver extends BroadcastReceiver {
                     invite.displayStatus(decoded[1], senderNum, decoded[2]);
                 }else if(decoded[1].equals("IN_PROGRESS")){
                     ttt.receiveTurn(decoded[2], decoded[3]);
+                }else  if(decoded[1].equals("CANCEL")){
+                    ttt.cancelGame();
+                }else if(decoded[1].equals("REMATCH")){
+                    ttt.restartGame();
                 }
             }
 
