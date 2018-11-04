@@ -9,39 +9,17 @@ import android.os.Bundle;
 import android.telephony.SmsMessage;
 
 public class SMSReceiver extends BroadcastReceiver {
-    Invite activity;
-    SecondPlayer secondPlayer;
-    MainActivity mainActivity;
+    Invite invite;
     TTT ttt;
-
     final String filter = "android.provider.Telephony.SMS_RECEIVED";
     IntentFilter intentFilter = new IntentFilter(filter);
-    public SMSReceiver(Context context) {
-        try{
-           activity = (Invite) context;
-        }catch(Exception e){
-            System.out.println(e);
 
-        }
-        try{
-            secondPlayer = (SecondPlayer) context;
-        }catch (Exception e){
-            System.out.println(e);
-
-        }
-        try{
-            mainActivity = (MainActivity) context;
-        }catch (Exception e){
-            System.out.println(e);
-        }
-        try{
+    public SMSReceiver(Context context, String cName) {
+        if(cName.equals("invite")){
+            invite = (Invite) context;
+        }else if(cName.equals("ttt")){
             ttt = (TTT) context;
-        }catch (Exception e){
-            System.out.println(e);
-
         }
-
-
         context.registerReceiver(this, intentFilter);
     }
 
@@ -62,7 +40,20 @@ public class SMSReceiver extends BroadcastReceiver {
             }
             String senderNum = currentMessage.getDisplayOriginatingAddress();
             String message = currentMessage.getDisplayMessageBody();
-            if(message.equals("start")){
+            String[] decoded = message.split(",");
+
+            if(decoded[0].equals("&&&TTT")){
+                if(decoded[1].equals("INVITE")){
+                    invite.displayAlert(decoded[2],senderNum);
+                }else if(decoded[1].equals("ACCEPT") || decoded[1].equals("REJECT")){
+                    invite.displayStatus(decoded[1], senderNum, decoded[2]);
+                }else if(decoded[1].equals("IN_PROGRESS")){
+                    ttt.receiveTurn(decoded[2], decoded[3]);
+                }
+            }
+
+
+            /*if(message.equals("start")){
                 activity.displayAlert(senderNum);
             }else if(message.equals("deny") || message.equals("accept")){
                 activity.displayStatus(message, senderNum);
@@ -79,7 +70,7 @@ public class SMSReceiver extends BroadcastReceiver {
                 ttt.cancelGame();
             }else if(message.contains("restart")){
                 ttt.restartGame();
-            }
+            }*/
         }
     }
 

@@ -17,20 +17,19 @@ public class TTT extends AppCompatActivity {
     int current = 0, playerNum = 0;
     SmsManager smsManager = SmsManager.getDefault();
     String phoneNumber;
-    TTT activity;
+    SMSReceiver smsReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ttt);
-        SMSReceiver smsReceiver = new SMSReceiver(this);
-
-        activity = this;
+        smsReceiver = new SMSReceiver(this, "ttt");
         Intent intent = getIntent();
-        player[0] = new Player(intent.getStringExtra(MainActivity.P1_IMAGE), intent.getStringExtra(MainActivity.P1_NAME));
-        player[1] = new Player(intent.getStringExtra(SecondPlayer.P2_IMAGE), intent.getStringExtra(SecondPlayer.P2_NAME));
-
         playerNum = intent.getIntExtra("PLAYER_NUM", -1);
+
+        player[(playerNum == 1) ? 1:0] = new Player(intent.getStringExtra(PlayerSettings.PLAYER_IMAGE), intent.getStringExtra(PlayerSettings.PLAYER_NAME));
+        player[(playerNum == 1) ? 0:1] = new Player("ball", intent.getStringExtra("SECOND_PLAYER_NAME"));
+
         phoneNumber = intent.getStringExtra("PHONE_NUMBER");
 
         if(current%2 == playerNum){
@@ -84,9 +83,9 @@ public class TTT extends AppCompatActivity {
                 }
                 smsManager.sendTextMessage(phoneNumber, null, "cancel," + playerNum + "," + player[current%2].name + "," +player[current%2].symbol , null, null);
 
-                Intent sIntent = new Intent(activity.getApplicationContext(), Invite.class);
+                Intent sIntent = new Intent(v.getContext(), Invite.class);
                 sIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                activity.getApplicationContext().startActivity(sIntent);
+                startActivity(sIntent);
                 finish();
             }
         });
@@ -100,12 +99,13 @@ public class TTT extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     if(current%2 == playerNum){
-                        smsManager.sendTextMessage(phoneNumber, null, "in_progress," + playerNum + "," + player[current%2].name + "," +player[current%2].symbol +","+j , null, null);
+                        String message = "&&&TTT,IN_PROGRESS," + playerNum + "," + j;
+                        smsManager.sendTextMessage(phoneNumber, null, message , null, null);
                         getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                     }
                     if(tttButton[j].getText().toString().equals("")) {
                         player[current%2].register(tttButton[j], j);
-                           player[current%2].MarkCell(j);
+                        player[current%2].MarkCell(j);
                         current++;
                         String updateText = "It is " + player[current % 2].name + "'s turn";
                         turnLabel.setText(updateText);
@@ -148,15 +148,14 @@ public class TTT extends AppCompatActivity {
         return check;
     }
 
-    public void receiveTurn(String message){
-        String[] vars = message.split(",");
-        activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-        current = Integer.parseInt(vars[1]);
-        tttButton[Integer.parseInt(vars[4])].performClick();
+    public void receiveTurn(String player_num, String loc){
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        current = Integer.parseInt(player_num);
+        tttButton[Integer.parseInt(loc)].performClick();
     }
 
     public void cancelGame(){
-        Intent sIntent = new Intent(activity.getApplicationContext(), Invite.class);
+        Intent sIntent = new Intent(getApplicationContext(), Invite.class);
         sIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         this.startActivity(sIntent);
         finish();

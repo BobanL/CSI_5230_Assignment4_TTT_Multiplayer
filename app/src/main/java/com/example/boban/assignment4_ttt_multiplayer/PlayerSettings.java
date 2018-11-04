@@ -18,7 +18,7 @@ public class PlayerSettings extends AppCompatActivity {
     ImageButton buttonGhost, buttonPumpkin, buttonCar = null;
     EditText textName = null;
     Button next = null;
-    String imageName = null;
+    String imageName = "ghost";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,10 +72,16 @@ public class PlayerSettings extends AppCompatActivity {
             }
         });
 
-
-
         if(intent.hasExtra("PLAYER_NAME")){
-            textName.setText(intent.getStringExtra("PLAYER_NAME"));
+            textName.setText(intent.getStringExtra(PLAYER_NAME));
+            String image = intent.getStringExtra(PLAYER_IMAGE);
+            if(image.equals("ghost")){
+                buttonGhost.performClick();
+            }else if(image.equals("pumpkin")){
+                buttonPumpkin.performClick();
+            }else if(image.equals("car")){
+                buttonCar.performClick();
+            }
         }
     }
 }

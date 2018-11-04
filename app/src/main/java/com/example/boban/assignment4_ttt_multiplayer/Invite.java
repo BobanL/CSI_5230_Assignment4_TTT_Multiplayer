@@ -20,48 +20,60 @@ public class Invite extends AppCompatActivity {
     EditText phoneNumberText = null;
     Button inviteButton = null;
     SmsManager smsManager = SmsManager.getDefault();
-
+    Button backButton = null;
+    String pname, image;
+    SMSReceiver smsReceiver;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
-
+        Intent intent = getIntent();
+        smsReceiver = new SMSReceiver(this, "invite");
+        pname = intent.getStringExtra(PlayerSettings.PLAYER_NAME);
+        image = intent.getStringExtra(PlayerSettings.PLAYER_IMAGE);
         statusText = findViewById(R.id.statusText);
         phoneNumberText = findViewById(R.id.phoneNumberText);
         inviteButton = findViewById(R.id.inviteButton);
+        backButton = findViewById(R.id.buttonBackSettings);
 
         inviteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 statusText.setText("Status: Pending");
-                String message = "start";
+                String message = "&&&TTT,INVITE," + pname;
                 String phoneNumber = phoneNumberText.getText().toString();
                 smsManager.sendTextMessage(phoneNumber, null, message,null, null);
             }
         });
-        SMSReceiver smsReceiver = new SMSReceiver(this);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent settingsIntent = new Intent(v.getContext(), PlayerSettings.class);
+                settingsIntent.putExtra(PlayerSettings.PLAYER_NAME, pname);
+                settingsIntent.putExtra(PlayerSettings.PLAYER_IMAGE, image);
+                startActivity(settingsIntent);
+            }
+        });
         if(!isSmsPermissionGranted()){
             requestReadAndSendSmsPermission();
         }
-
     }
 
 
-    public void displayAlert(final String number){
+    public void displayAlert(final String inviterName, final String senderNumber){
         AlertDialog.Builder builder = new AlertDialog.Builder(Invite.this);
-        builder.setMessage("You've been invited by " + number).setTitle("Invited!");
+        builder.setMessage("You've been invited by " + inviterName).setTitle("Invited!");
         builder.setPositiveButton("Accept Invite", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                smsManager.sendTextMessage(number, null, "accept", null, null);
-                Intent intent = new Intent(Invite.this, SecondPlayer.class);
-                intent.putExtra("phone_number", number);
-                startActivity(intent);
-                finish();
+                String message = "&&&TTT,ACCEPT," + pname;
+                smsManager.sendTextMessage(senderNumber, null, message, null, null);
+                startTTT(senderNumber, inviterName, true);
             }
         });
         builder.setNegativeButton("Deny Invite", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                smsManager.sendTextMessage(number, null, "deny", null, null);
+                String message = "&&&TTT,REJECT," + pname;
+                smsManager.sendTextMessage(senderNumber, null, message, null, null);
             }
         });
         AlertDialog dialog = builder.create();
@@ -69,15 +81,25 @@ public class Invite extends AppCompatActivity {
 
     }
 
-    public void displayStatus(String message, String number){
-        if(message.equals("deny")){
+    public void displayStatus(String message, String number, String inviterName){
+        if(message.equals("REJECT")){
             statusText.setText("Status: Invite Rejected!");
         }
-        if(message.equals("accept")){
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.putExtra("phone_number", number);
-            startActivity(intent);
+        if(message.equals("ACCEPT")){
+            startTTT(number, inviterName, false);
         }
+    }
+
+    private void startTTT(final String number, String inviterName, Boolean invited){
+        unregisterReceiver(smsReceiver);
+        Intent intent = new Intent(Invite.this, TTT.class);
+        intent.putExtra("PHONE_NUMBER", number);
+        intent.putExtra(PlayerSettings.PLAYER_NAME, pname);
+        intent.putExtra(PlayerSettings.PLAYER_IMAGE, image);
+        intent.putExtra("SECOND_PLAYER_NAME", inviterName);
+        intent.putExtra("PLAYER_NUM", (invited ? 1 : 0));
+        startActivity(intent);
+        finish();
     }
 
     public boolean isSmsPermissionGranted(){

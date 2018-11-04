@@ -21,14 +21,17 @@ public class TTTButton extends AppCompatButton implements Observer{
     }
 
 	public void update(String s) {
-		this.setText(s);
-        if (!s.equals("")) {
-            int resID = getResources().getIdentifier(s, "drawable", context.getPackageName());
-            Drawable drawablePic = getResources().getDrawable(resID);
-            this.setBackground(drawablePic);
-        } else {
-            this.setBackgroundResource(android.R.drawable.btn_default);
+        this.setText(s);
+        if (s != null) {
+            if (!s.isEmpty()) {
+                int resID = getResources().getIdentifier(s, "drawable", context.getPackageName());
+                Drawable drawablePic = getResources().getDrawable(resID);
+                this.setBackground(drawablePic);
+            } else {
+                this.setBackgroundResource(android.R.drawable.btn_default);
+            }
         }
+
     }
 
     public int getIndex() {
